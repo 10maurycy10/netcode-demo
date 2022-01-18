@@ -1,5 +1,4 @@
-// TODO dont hardcode ip!!!
-var socket = new WebSocket('ws://' + location.host);
+var socket = new WebSocket('wss://' + location.host);
 
 socket.binaryType = 'arraybuffer'
 
@@ -26,14 +25,6 @@ var selfId = null;
 var players = Object.create(null);
 
 var inputs = {left: false, right: false, up: false, down: false}
-
-// trackkeys.js
-var input_table = {
-	"a" : "left",
-	"d" : "right",
-	"w" : "up",
-	"s" : "down"
-}
 
 // render.js
 var colors = {

@@ -1,3 +1,10 @@
+var input_table = {
+	        "a" : "left",
+	        "d" : "right",
+	        "w" : "up",
+	        "s" : "down"
+};
+
 // move to trackkeys.js
 document.addEventListener('keypress', (event) => {
         var name = event.key;
