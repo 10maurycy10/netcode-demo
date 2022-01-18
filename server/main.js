@@ -54,7 +54,7 @@ function setupServer() {
 	const app = express();
 	app.use('/assets', express.static('assets'))
 	app.use('/', express.static('client'))
-	const server = app.listen(5000);
+	const server = app.listen(process.env.PORT ?? 5000);
 	server.on('upgrade', (request, socket, head) => {
 		wss.handleUpgrade(request, socket, head, socket => {
 			wss.emit('connection', socket, request);
