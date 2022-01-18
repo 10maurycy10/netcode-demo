@@ -1,0 +1,8 @@
+#gamemap {
+	position:fixed;
+}
+
+html, body {
+	margin: 0;
+	padding: 0;
+}

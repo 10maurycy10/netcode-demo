@@ -1,0 +1,26 @@
+{
+  "name": "netcode-demo",
+  "version": "1.0.0",
+  "description": "A demonstration of an in browser multiplayer game",
+  "main": "server/main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server/main.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/10maurycy10/netcode-demo.git"
+  },
+  "author": "10maurycy10@gmail.com",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/10maurycy10/netcode-demo/issues"
+  },
+  "homepage": "https://github.com/10maurycy10/netcode-demo#readme",
+  "dependencies": {
+    "express": "^4.17.2",
+    "msgpack-lite": "^0.1.26",
+    "uuid": "^8.3.2",
+    "ws": "^8.4.2"
+  }
+}
