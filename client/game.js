@@ -32,7 +32,8 @@ var players = Object.create(null);
 var players_old = Object.create(null);
 var last_update_time = performance.now();
 
-var inputs = {left: false, right: false, up: false, down: false}
+var arrows = Object.create(null);
+var inputs = {left: false, right: false, up: false, down: false, fleft: false, fright: false}
 
 // render.js
 var colors = {
@@ -56,10 +57,13 @@ function handlemsg(obj) {
 			}
 		}
 	}
+	if (obj.arrows !== undefined)
+		arrows = obj.arrows;
 	if (obj.selfid !== undefined) {
 		selfId = obj.selfid
 		players[selfId] = {}
 		players[selfId].pos = [100,100]
+		players[selfId].angle = 0
 	}
 	if (obj.leave !== undefined) {
 		for (pid of Object.values(obj.leave)) {
@@ -82,6 +86,12 @@ function update_movement() {
 	}
 	if (inputs["up"]) {
 		players[selfId].pos[1] -= 2;
+	}
+	if (inputs["fleft"]) {
+		players[selfId].angle += 0.1
+	}
+	if (inputs["fright"]) {
+		players[selfId].angle -= 0.1
 	}
 	
 	// send update to server

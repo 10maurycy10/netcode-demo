@@ -46,6 +46,7 @@ function render(time) {
 	ctx.fillRect(0,0,w,h)
 	
 	for (pid of Object.keys(players)) {
+		let ang = players[pid].angle;
 		var ap_pos = Object.create(players[pid].pos);
 		if (players_old[pid] && pid !== selfId) {
 			var ipos = (time - last_update_time)/(1000/24);
@@ -54,9 +55,13 @@ function render(time) {
 			ap_pos[1] = lerp(players_old[pid].pos[1], ap_pos[1],ipos)	
 			console.log(time,last_update_time,ipos)
 		}
+		drawCircle(ctx, ap_pos[0] + Math.sin(ang) * 10, ap_pos[1] + Math.cos(ang) * 10, 4, "#EEEEEE")
 		if (pid === selfId)
 			drawCircle(ctx, ap_pos[0],ap_pos[1], 10, colors.red)
 		else
 			drawCircle(ctx, ap_pos[0],ap_pos[1], 10, colors.blue)
+	}
+	for (aid of Object.keys(arrows)) {
+		drawCircle(ctx, arrows[aid].pos[0], arrows[aid].pos[1], 2, "#EEEEEE")
 	}
 }

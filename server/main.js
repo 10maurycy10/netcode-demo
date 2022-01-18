@@ -7,11 +7,51 @@ var players = Object.create(null)
 
 var connections = Object.create(null)
 
+// server owned objects
+var arrows = Object.create(null)
+
+function killarrows() {
+	var time = Date.now();
+	for (aid of Object.keys(arrows)) {
+		if ((arrows[aid].time + 3000) < time) {
+			delete arrows[aid]
+		}
+	}
+}
+
+function update() {
+	for (aid of Object.keys(arrows)) {
+		arrows[aid].pos[0] += arrows[aid].vol[0]
+		arrows[aid].pos[1] += arrows[aid].vol[1]
+	}
+}
+
+function validatedata(obj) {
+	if (typeof(obj) !== 'object') {
+		console.log("bad0")
+		return false
+	}
+	if (typeof(obj.pos) !== 'object') {
+		return false
+	}
+	if (typeof(obj.pos[0]) !== 'number') {
+		return false
+	}
+	if (typeof(obj.pos[1]) !== 'number') {
+		return false;
+	}
+	if (typeof(obj.angle) !== 'number') {
+		return false;
+	}
+	// TODO more checks
+	return true
+}
+
 function broadcastdata() {
 	//console.log(connections)
 	for (pid of Object.keys(connections)) {
 		//console.log(pid)
-		connections[pid].send(msgpack.encode({players: players}))
+		connections[pid].send(msgpack.encode({players: players, arrows: arrows}));
 	}
 }
 
@@ -19,7 +59,18 @@ function handlemsg(data,id) {
 	try {
 		var obj = msgpack.decode(data)
 		if (obj.selfdata) {
-			players[id] = obj.selfdata;
+			if (validatedata(obj.selfdata))
+				players[id] = obj.selfdata;
+		}
+		if (obj.fire) {
+			let p_pos = players[id].pos
+			let p_a = players[id].angle
+			let aid = uuid.v4();
+			arrows[aid] = {
+				pos: [p_pos[0],p_pos[1]],
+				vol: [Math.sin(p_a)*10,Math.cos(p_a)*10],
+				time: Date.now()
+			};
 		}
 		//console.log(players)
 	} catch (e) {
@@ -64,4 +115,9 @@ function setupServer() {
 
 setupServer()
 
-setInterval(broadcastdata,1000/24)
+setInterval(killarrows,1000/10)
+
+setInterval(() => {
+	update();
+	broadcastdata();
+},1000/24)

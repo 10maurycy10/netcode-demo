@@ -1,14 +1,18 @@
 var input_table = {
-	        "a" : "left",
-	        "d" : "right",
-	        "w" : "up",
-	        "s" : "down"
+	"a" : "left",
+	"d" : "right",
+	"w" : "up",
+	"s" : "down",
+	"q" : "fleft",
+	"e" : "fright",
 };
 
 // move to trackkeys.js
 document.addEventListener('keypress', (event) => {
         var name = event.key;
-        if (input_table[name]) {
+	if (name === " ")
+		socket.send(msgpack.encode({fire: true}))
+	if (input_table[name]) {
                 inputs[input_table[name]] = true;
         }
 }, false);
