@@ -40,5 +40,8 @@ function render() {
 	ctx.fillRect(0,0,w,h)
 	
 	for (pid of Object.keys(players))
-		drawCircle(ctx, players[pid].pos[0],players[pid].pos[1], 10, colors.blue)
+		if (pid === selfId)
+			drawCircle(ctx, players[pid].pos[0],players[pid].pos[1], 10, colors.red)
+		else
+			drawCircle(ctx, players[pid].pos[0],players[pid].pos[1], 10, colors.blue)
 }

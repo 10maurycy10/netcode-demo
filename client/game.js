@@ -30,7 +30,8 @@ var inputs = {left: false, right: false, up: false, down: false}
 var colors = {
 	gray: "#666666",
 	darkgray: "#333333",
-	blue: "#2222EE"
+	blue: "#2222EE",
+	red: "#EE2222"
 }
 
 function handlemsg(obj) {
