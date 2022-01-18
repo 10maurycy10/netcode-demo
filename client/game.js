@@ -1,5 +1,5 @@
 // TODO dont hardcode ip!!!
-var socket = new WebSocket('ws://192.168.1.60:5000');
+var socket = new WebSocket('ws://' + location.host);
 
 socket.binaryType = 'arraybuffer'
 
@@ -25,12 +25,14 @@ function drawCircle(ctx, x, y, radius, fill, stroke, strokeWidth) {
 var selfId = null;
 var players = Object.create(null);
 
-var inputs = {left: false, right: false}
+var inputs = {left: false, right: false, up: false, down: false}
 
 // trackkeys.js
 var input_table = {
 	"a" : "left",
-	"d" : "right"
+	"d" : "right",
+	"w" : "up",
+	"s" : "down"
 }
 
 // render.js
@@ -41,12 +43,11 @@ var colors = {
 }
 
 function handlemsg(obj) {
-	//console.log(obj)
 	if (obj.players) {
 		for (pid of Object.keys(obj.players)) {
+			// dont move the owned player
 			if (pid !== selfId || obj.overrideself)
 				players[pid] = obj.players[pid]
-			//else console.log("rejecting self update")
 		}
 	}
 	if (obj.selfid !== undefined) {
@@ -56,7 +57,7 @@ function handlemsg(obj) {
 	}
 	if (obj.leave !== undefined) {
 		for (pid of Object.values(obj.leave)) {
-			console.log(`removeing ${pid}`)
+			console.log(`removing ${pid}`)
 			delete players[pid]
 		}
 	}
@@ -65,14 +66,20 @@ function handlemsg(obj) {
 function update_movement() {
 	if (!selfId) return;
 	if (inputs["left"]) {
-		players[selfId].pos[0] -= 1;
+		players[selfId].pos[0] -= 2;
 	}
 	if (inputs["right"]) {
-		players[selfId].pos[0] += 1;
+		players[selfId].pos[0] += 2;
+	}
+	if (inputs["down"]) {
+		players[selfId].pos[1] += 2;
+	}
+	if (inputs["up"]) {
+		players[selfId].pos[1] -= 2;
 	}
 	
+	// send update to server
 	socket.send(msgpack.encode({selfdata: players[selfId]}))
-	//console.log(pos)
 }
 
 socket.addEventListener('open', (event) => {
@@ -82,10 +89,13 @@ socket.addEventListener('open', (event) => {
 		handlemsg(msgpack.decode(new Uint8Array(msg.data)))
 	};
 
-	socket.onclose = () => alert("Disconnected")
 	
+	socket.onclose = () => alert("Disconnected")
+
+	// TODO consolidate the updates.
 	setInterval(render, 1000/60)
 
 	setInterval(update_movement, 1000/60)
 });
 
+socket.addEventListener('error', (e) => {alert(`Disconnected`); console.error(e);})
