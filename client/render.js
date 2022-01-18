@@ -21,8 +21,14 @@ function drawCircle(ctx, x, y, radius, fill, stroke, strokeWidth) {
 }
 
 // render.js
-function render() {
-	 
+
+function lerp(a,b,p) {
+	return a*(1-p) + b*p
+}
+
+// server tick rate is 24 tps
+function render(time) {
+	//console.log(time)
 	if (!selfId) return;
 	var ctx = c.getContext("2d");
 
@@ -39,9 +45,18 @@ function render() {
 	ctx.fillStyle = colors.darkgray;
 	ctx.fillRect(0,0,w,h)
 	
-	for (pid of Object.keys(players))
+	for (pid of Object.keys(players)) {
+		var ap_pos = Object.create(players[pid].pos);
+		if (players_old[pid] && pid !== selfId) {
+			var ipos = (time - last_update_time)/(1000/24);
+			var ipos = Math.min(1,ipos);
+			ap_pos[0] = lerp(players_old[pid].pos[0], ap_pos[0],ipos)	
+			ap_pos[1] = lerp(players_old[pid].pos[1], ap_pos[1],ipos)	
+			console.log(time,last_update_time,ipos)
+		}
 		if (pid === selfId)
-			drawCircle(ctx, players[pid].pos[0],players[pid].pos[1], 10, colors.red)
+			drawCircle(ctx, ap_pos[0],ap_pos[1], 10, colors.red)
 		else
-			drawCircle(ctx, players[pid].pos[0],players[pid].pos[1], 10, colors.blue)
+			drawCircle(ctx, ap_pos[0],ap_pos[1], 10, colors.blue)
+	}
 }

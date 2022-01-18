@@ -1,4 +1,9 @@
-var socket = new WebSocket('wss://' + location.host);
+var address = "wss://" + location.host
+
+if (location.protocol === "http:")
+	address = "ws://" + location.host
+
+var socket = new WebSocket(address);
 
 socket.binaryType = 'arraybuffer'
 
@@ -23,6 +28,9 @@ function drawCircle(ctx, x, y, radius, fill, stroke, strokeWidth) {
 
 var selfId = null;
 var players = Object.create(null);
+// the playerdata last update, used for interpolation
+var players_old = Object.create(null);
+var last_update_time = performance.now();
 
 var inputs = {left: false, right: false, up: false, down: false}
 
@@ -36,10 +44,16 @@ var colors = {
 
 function handlemsg(obj) {
 	if (obj.players) {
+		last_update_time = performance.now()
+		// backup old player data;
+		for (pid of Object.keys(players))
+			players_old[pid] = players[pid];
+		// update positions
 		for (pid of Object.keys(obj.players)) {
 			// dont move the owned player
-			if (pid !== selfId || obj.overrideself)
-				players[pid] = obj.players[pid]
+			if (pid !== selfId || obj.overrideself) {
+				players[pid] = obj.players[pid];
+			}
 		}
 	}
 	if (obj.selfid !== undefined) {
@@ -74,6 +88,11 @@ function update_movement() {
 	socket.send(msgpack.encode({selfdata: players[selfId]}))
 }
 
+function dorender(t) {	
+	render(t);
+	requestAnimationFrame(dorender);
+}
+
 socket.addEventListener('open', (event) => {
 	// game.js
 	socket.onmessage = (msg) => {
@@ -85,7 +104,8 @@ socket.addEventListener('open', (event) => {
 	socket.onclose = () => alert("Disconnected")
 
 	// TODO consolidate the updates.
-	setInterval(render, 1000/60)
+	
+	requestAnimationFrame(dorender)
 
 	setInterval(update_movement, 1000/60)
 });
