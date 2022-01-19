@@ -67,6 +67,10 @@ function handlemsg(obj) {
 			}
 		}
 	}
+	if (obj.fireack !== undefined) {
+		console.log(`arrow ${obj.fireack} acked, removing fake arrow`)
+		delete fakearrows[obj.fireack]
+	}
 	if (obj.arrows !== undefined)
 		arrows = obj.arrows;
 	if (obj.selfid !== undefined) {

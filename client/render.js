@@ -53,7 +53,7 @@ function render(time) {
 			var ipos = Math.min(1,ipos);
 			ap_pos[0] = lerp(players_old[pid].pos[0], ap_pos[0],ipos)	
 			ap_pos[1] = lerp(players_old[pid].pos[1], ap_pos[1],ipos)	
-			console.log(time,last_update_time,ipos)
+			//console.log(time,last_update_time,ipos)
 		}
 		drawCircle(ctx, ap_pos[0] + Math.sin(ang) * 10, ap_pos[1] + Math.cos(ang) * 10, 4, "#EEEEEE")
 		if (pid === selfId)

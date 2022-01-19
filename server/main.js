@@ -73,6 +73,8 @@ function handlemsg(data,id,ip) {
 				vol: [Math.sin(p_a)*10,Math.cos(p_a)*10],
 				time: Date.now()
 			};
+			if (obj.id !== undefined)
+				connections[id].send(msgpack.encode({fireack: obj.id}))
 		}
 		//console.log(players)
 	} catch (e) {
