@@ -11,7 +11,7 @@ var input_table = {
 document.addEventListener('keypress', (event) => {
         var name = event.key;
 	if (name === " ")
-		socket.send(msgpack.encode({fire: true}))
+		socket.send(msgpack.encode({fire: players[selfId].pos}))
 	if (input_table[name]) {
                 inputs[input_table[name]] = true;
         }

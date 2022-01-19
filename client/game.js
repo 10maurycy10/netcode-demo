@@ -34,6 +34,7 @@ var last_update_time = performance.now();
 
 var arrows = Object.create(null);
 var inputs = {left: false, right: false, up: false, down: false, fleft: false, fright: false}
+var player_props = ["pos","angle"]
 
 // render.js
 var colors = {
@@ -41,6 +42,14 @@ var colors = {
 	darkgray: "#333333",
 	blue: "#2222EE",
 	red: "#EE2222"
+}
+
+function snap(proto, data) {
+	var o = {}
+	for (key of player_props) {
+		o[key] = data[key] ?? proto[key] 
+	}
+	return o;
 }
 
 function handlemsg(obj) {
@@ -53,7 +62,7 @@ function handlemsg(obj) {
 		for (pid of Object.keys(obj.players)) {
 			// dont move the owned player
 			if (pid !== selfId || obj.overrideself) {
-				players[pid] = obj.players[pid];
+				players.pid = snap(players[pid],obj.players[pid]);
 			}
 		}
 	}

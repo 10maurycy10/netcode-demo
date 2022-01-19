@@ -64,7 +64,8 @@ function handlemsg(data,id,ip) {
 				players[id] = obj.selfdata;
 		}
 		if (obj.fire) {
-			let p_pos = players[id].pos
+			//let p_pos = players[id].pos
+			let p_pos = obj.fire
 			let p_a = players[id].angle
 			let aid = uuid.v4();
 			arrows[aid] = {
