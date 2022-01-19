@@ -69,7 +69,7 @@ function handlemsg(data,id,ip) {
 			let p_a = players[id].angle
 			let aid = uuid.v4();
 			arrows[aid] = {
-				pos: [p_pos[0] + Math.sin(p_a)*10,p_pos[1]+Math.cos(p_a)*10],
+				pos: [p_pos[0] + Math.sin(p_a)*20,p_pos[1]+Math.cos(p_a)*20],
 				vol: [Math.sin(p_a)*10,Math.cos(p_a)*10],
 				time: Date.now()
 			};
