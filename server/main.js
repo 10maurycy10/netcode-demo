@@ -2,6 +2,7 @@ const msgpack = require('msgpack-lite')
 const uuid = require('uuid')
 const WebSocket = require('ws');
 const express = require('express');
+const config = require('./config.js');
 
 var players = Object.create(null)
 
@@ -55,7 +56,7 @@ function broadcastdata() {
 	}
 }
 
-function handlemsg(data,id) {
+function handlemsg(data,id,ip) {
 	try {
 		var obj = msgpack.decode(data)
 		if (obj.selfdata) {
@@ -67,7 +68,7 @@ function handlemsg(data,id) {
 			let p_a = players[id].angle
 			let aid = uuid.v4();
 			arrows[aid] = {
-				pos: [p_pos[0],p_pos[1]],
+				pos: [p_pos[0] + Math.sin(p_a)*10,p_pos[1]+Math.cos(p_a)*10],
 				vol: [Math.sin(p_a)*10,Math.cos(p_a)*10],
 				time: Date.now()
 			};
@@ -75,7 +76,7 @@ function handlemsg(data,id) {
 		//console.log(players)
 	} catch (e) {
 		// TODO log orgin ip!
-		console.log(`bad packet! ${e}`)
+		console.log(`bad packet! ${e} from ${ip}`)
 		return;
 	}
 } 
@@ -86,12 +87,13 @@ function setupServer() {
 		noServer: true
 	});
 	
-	wss.on('connection', socket => {
+	wss.on('connection', (socket,req) => {
 		var id = uuid.v4()
+		console.log(`join ${id} ${req.socket.remoteAddress}`)
 		connections[id] = socket;
-		socket.on('message', (msg) => handlemsg(msg,id));
+		socket.on('message', (msg) => handlemsg(msg,id,req.socket.remoteAddress));
 		socket.on('close', () => {
-			console.log("someone left")
+			console.log(`${id} left, ${req.socket.remoteAddress}`)
 			delete players[id]
 			delete connections[id]
 			for (pid of Object.keys(connections)) {
@@ -105,7 +107,7 @@ function setupServer() {
 	const app = express();
 	app.use('/assets', express.static('assets'))
 	app.use('/', express.static('client'))
-	const server = app.listen(process.env.PORT ?? 5000);
+	const server = app.listen(config.c_port);
 	server.on('upgrade', (request, socket, head) => {
 		wss.handleUpgrade(request, socket, head, socket => {
 			wss.emit('connection', socket, request);
