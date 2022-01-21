@@ -1,4 +1,4 @@
-// time is in secconds
+// time is in seconds
 function arrow_spawn(player,id,lag_comp,arrows) {
 //	console.log(player,id,lag_comp,arrows)
 	var ppos = player.pos;
@@ -7,7 +7,7 @@ function arrow_spawn(player,id,lag_comp,arrows) {
 		// arrow time is unix millis
 		time: Date.now(),
 		pos: [ppos[0], ppos[1]],
-		vol: [Math.sin(pa) * 500, Math.cos(pa) * 500]
+		vol: [Math.sin(pa) * 300, Math.cos(pa) * 300]
 	}
 	arrow_tick(arrows, id, lag_comp);
 }
