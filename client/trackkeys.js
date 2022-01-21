@@ -19,9 +19,10 @@ document.addEventListener('keypress', (event) => {
 		fakearrows[id] = {
 			time: Date.now(),
 			pos: [ppos[0] + Math.sin(pa) * 10,ppos[1] + Math.cos(pa) * 10],
-			vol: [Math.sin(pa) * 8,Math.cos(pa)*8]
+			vol: [Math.sin(pa) * 10,Math.cos(pa)*10]
 		}
-		socket.send(msgpack.encode({fire: players[selfId].pos, id: id}));
+		console.log(gameping)
+		socket.send(msgpack.encode({fire: players[selfId].pos, id: id, leadtime: gameping}));
 	}
 	if (input_table[name]) {
                 inputs[input_table[name]] = true;

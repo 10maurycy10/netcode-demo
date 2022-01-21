@@ -36,6 +36,7 @@ var arrows = Object.create(null);
 var fakearrows = Object.create(null);
 var inputs = {left: false, right: false, up: false, down: false, fleft: false, fright: false}
 var player_props = ["pos","angle"]
+var gameping = 0;
 
 // render.js
 var colors = {
@@ -63,7 +64,7 @@ function handlemsg(obj) {
 		for (pid of Object.keys(obj.players)) {
 			// dont move the owned player
 			if (pid !== selfId || obj.overrideself) {
-				players.pid = snap(players[pid],obj.players[pid]);
+				players[pid] = snap(players[pid],obj.players[pid]);
 			}
 		}
 	}
@@ -85,6 +86,12 @@ function handlemsg(obj) {
 			delete players[pid]
 		}
 	}
+	if (obj.pong !== undefined) {
+		var mesured_ping = Date.now() - obj.pong;
+		gameping = gameping*0.9 + mesured_ping * 0.1
+		//console.log(`pong: ${obj.pong}; time ${Date.now()} ; ping: ${mesured_ping}; ping 2s rolling ${gameping};`,obj)
+	}
+
 }
 
 function update_movement() {
@@ -143,6 +150,7 @@ socket.addEventListener('open', (event) => {
 	requestAnimationFrame(dorender)
 
 	setInterval(update_movement, 1000/60)
+	setInterval(() => socket.send(msgpack.encode({ping: Date.now()},200)))
 	setInterval(tickfakearrows, 1000/24);
 });
 

@@ -68,13 +68,20 @@ function handlemsg(data,id,ip) {
 			let p_pos = obj.fire
 			let p_a = players[id].angle
 			let aid = uuid.v4();
+			let leadticks = obj.leadtime / 1000 * 24;
+			let dx = Math.sin(p_a)*10;
+			let dy = Math.cos(p_a)*10;
+//			console.log(obj.ping,leadticks)
 			arrows[aid] = {
-				pos: [p_pos[0] + Math.sin(p_a)*20,p_pos[1]+Math.cos(p_a)*20],
-				vol: [Math.sin(p_a)*10,Math.cos(p_a)*10],
+				vol: [dx,dy],
+				pos: [p_pos[0] + dx * leadticks + dx,p_pos[1]+ dy * leadticks + dy],
 				time: Date.now()
 			};
 			if (obj.id !== undefined)
 				connections[id].send(msgpack.encode({fireack: obj.id}))
+		}
+		if (obj.ping) {
+			connections[id].send(msgpack.encode({pong: obj.ping}))
 		}
 		//console.log(players)
 	} catch (e) {

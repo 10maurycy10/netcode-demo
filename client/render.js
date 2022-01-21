@@ -68,4 +68,4 @@ function render(time) {
 		drawCircle(ctx, fakearrows[aid].pos[0], fakearrows[aid].pos[1], 2, "#00EE00")
 	}
 }
-z
+
