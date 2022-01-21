@@ -3,6 +3,7 @@ const uuid = require('uuid')
 const WebSocket = require('ws');
 const express = require('express');
 const config = require('./config.js');
+const game = require('../shared/game.js')
 
 var players = Object.create(null)
 
@@ -11,20 +12,8 @@ var connections = Object.create(null)
 // server owned objects
 var arrows = Object.create(null)
 
-function killarrows() {
-	var time = Date.now();
-	for (aid of Object.keys(arrows)) {
-		if ((arrows[aid].time + 3000) < time) {
-			delete arrows[aid]
-		}
-	}
-}
-
 function update() {
-	for (aid of Object.keys(arrows)) {
-		arrows[aid].pos[0] += arrows[aid].vol[0]
-		arrows[aid].pos[1] += arrows[aid].vol[1]
-	}
+	game.arrow_tick(arrows,1/24)
 }
 
 function validatedata(obj) {
@@ -66,17 +55,8 @@ function handlemsg(data,id,ip) {
 		if (obj.fire) {
 			//let p_pos = players[id].pos
 			let p_pos = obj.fire
-			let p_a = players[id].angle
-			let aid = uuid.v4();
-			let leadticks = obj.leadtime / 1000 * 24;
-			let dx = Math.sin(p_a)*10;
-			let dy = Math.cos(p_a)*10;
-//			console.log(obj.ping,leadticks)
-			arrows[aid] = {
-				vol: [dx,dy],
-				pos: [p_pos[0] + dx * leadticks + dx,p_pos[1]+ dy * leadticks + dy],
-				time: Date.now()
-			};
+			let leadtime = obj.leadtime / 1000;
+			game.arrow_spawn(players[id],uuid.v4(),leadtime,arrows)
 			if (obj.id !== undefined)
 				connections[id].send(msgpack.encode({fireack: obj.id}))
 		}
@@ -85,7 +65,6 @@ function handlemsg(data,id,ip) {
 		}
 		//console.log(players)
 	} catch (e) {
-		// TODO log orgin ip!
 		console.log(`bad packet! ${e} from ${ip}`)
 		return;
 	}
@@ -101,7 +80,7 @@ function setupServer() {
 		var id = uuid.v4()
 		console.log(`join ${id} ${req.socket.remoteAddress}`)
 		connections[id] = socket;
-		socket.on('message', (msg) => handlemsg(msg,id,req.socket.remoteAddress));
+		socket.on('message', (msg) => handlemsg(msg,id,req.socket.remoteAddress),300);
 		socket.on('close', () => {
 			console.log(`${id} left, ${req.socket.remoteAddress}`)
 			delete players[id]
@@ -116,6 +95,7 @@ function setupServer() {
 	// express black magic
 	const app = express();
 	app.use('/assets', express.static('assets'))
+	app.use('/shared', express.static('shared'))
 	app.use('/', express.static('client'))
 	const server = app.listen(config.c_port);
 	server.on('upgrade', (request, socket, head) => {
@@ -127,7 +107,6 @@ function setupServer() {
 
 setupServer()
 
-setInterval(killarrows,1000/10)
 
 setInterval(() => {
 	update();

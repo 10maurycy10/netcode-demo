@@ -11,17 +11,12 @@ var farrowid = 0;
 
 // move to trackkeys.js
 document.addEventListener('keypress', (event) => {
-        var name = event.key;
+        console.log(event)
+	var name = event.key;
 	if (name === " ") {
 		var id = farrowid++;
-		var ppos = players[selfId].pos;
-		var pa = players[selfId].angle;
-		fakearrows[id] = {
-			time: Date.now(),
-			pos: [ppos[0] + Math.sin(pa) * 10,ppos[1] + Math.cos(pa) * 10],
-			vol: [Math.sin(pa) * 10,Math.cos(pa)*10]
-		}
-		console.log(gameping)
+		var player = players[selfId];
+		arrow_spawn(player,id,0,fakearrows)
 		socket.send(msgpack.encode({fire: players[selfId].pos, id: id, leadtime: gameping}));
 	}
 	if (input_table[name]) {

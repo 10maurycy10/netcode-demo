@@ -119,17 +119,6 @@ function update_movement() {
 	socket.send(msgpack.encode({selfdata: players[selfId]}))
 }
 
-function tickfakearrows() {
-	var time = Date.now();
-	for (aid of Object.keys(fakearrows)) {
-		fakearrows[aid].pos[0] += fakearrows[aid].vol[0];
-		fakearrows[aid].pos[1] += fakearrows[aid].vol[1];
-		if ((fakearrows[aid].time + 500) < time ) {
-			delete fakearrows[aid];
-		}
-	}
-}
-
 function dorender(t) {	
 	render(t);
 	requestAnimationFrame(dorender);
@@ -151,7 +140,7 @@ socket.addEventListener('open', (event) => {
 
 	setInterval(update_movement, 1000/60)
 	setInterval(() => socket.send(msgpack.encode({ping: Date.now()},200)))
-	setInterval(tickfakearrows, 1000/24);
+	setInterval(() =>arrows_tick(fakearrows,1/24), 1000/24);
 });
 
 socket.addEventListener('error', (e) => {alert(`Disconnected`); console.error(e);})
