@@ -6,7 +6,7 @@ function arrow_spawn(player,id,lag_comp,arrows) {
 	arrows[id] = {
 		// arrow time is unix millis
 		time: Date.now(),
-		pos: [ppos[0], ppos[1]],
+		pos: [ppos[0] + Math.sin(pa) * 10, ppos[1] + Math.cos(pa) * 10],
 		vol: [Math.sin(pa) * 300, Math.cos(pa) * 300]
 	}
 	arrow_tick(arrows, id, lag_comp);
