@@ -37,6 +37,7 @@ var fakearrows = Object.create(null);
 var inputs = {left: false, right: false, up: false, down: false, fleft: false, fright: false}
 var player_props = ["pos","angle"]
 var gameping = 0;
+var remove_old_fake_arrows = true;
 
 // render.js
 var colors = {
@@ -69,8 +70,10 @@ function handlemsg(obj) {
 		}
 	}
 	if (obj.fireack !== undefined) {
-		console.log(`arrow ${obj.fireack} acked, removing fake arrow`)
-		delete fakearrows[obj.fireack]
+		if (remove_old_fake_arrows) {
+			console.log(`arrow ${obj.fireack} acked, removing fake arrow`)
+			delete fakearrows[obj.fireack]
+		}
 	}
 	if (obj.arrows !== undefined)
 		arrows = obj.arrows;
