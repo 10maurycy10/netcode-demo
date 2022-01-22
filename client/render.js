@@ -62,13 +62,10 @@ function render(time) {
 			drawCircle(ctx, ap_pos[0],ap_pos[1], 10, colors.blue)
 	}
 	//console.log(arrows)
-	if (arrows)
 	for (aid of Object.keys(arrows)) {
 		let ap_pos = [...arrows[aid].pos];
 		drawCircle(ctx, ap_pos[0], ap_pos[1], 2, "#EEEEEE")
 	}
-	else
-		console.log("wtf")
 	for (aid of Object.keys(fakearrows)) {
 		drawCircle(ctx, fakearrows[aid].pos[0], fakearrows[aid].pos[1], 2, "#00EE00")
 	}

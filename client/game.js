@@ -70,6 +70,7 @@ function handlemsg(obj) {
 		}
 	}
 	if (obj.arrows !== undefined) {
+		console.log(obj)
 		arrows = obj.arrows
 	}
 	if (obj.selfid !== undefined) {
@@ -100,8 +101,8 @@ function update_movement(dt) {
 var last_frame = Date.now();
 function frame(t) {	
 	render(t);
-	arrows_tick(arrows,     (t - last_frame)/1000)
-	arrows_tick(fakearrows, (t - last_frame)/1000);
+	arrows_tick(arrows,     (t - last_frame)/1000,false)
+	arrows_tick(fakearrows, (t - last_frame)/1000,false);
 	update_movement((t - last_frame)/1000);
 	last_frame = t;
 	requestAnimationFrame(frame);
@@ -109,10 +110,10 @@ function frame(t) {
 
 socket.addEventListener('open', (event) => {
 	// game.js
-	socket.onmessage = (msg) => {
+	socket.onmessage = (msg) => setTimeout(() => {
 		//console.log(msg)
 		handlemsg(msgpack.decode(new Uint8Array(msg.data)))
-	};
+	},300);
 
 	
 	socket.onclose = () => alert("Disconnected")
@@ -120,7 +121,7 @@ socket.addEventListener('open', (event) => {
 	// TODO consolidate the updates.
 	
 	requestAnimationFrame(frame)
-	setInterval(() => socket.send(msgpack.encode({ping: Date.now()},200)))
+	setInterval(() => socket.send(msgpack.encode({ping: Date.now()})))
 });
 
 socket.addEventListener('error', (e) => {alert(`Disconnected`); console.error(e);})

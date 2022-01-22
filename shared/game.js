@@ -40,12 +40,12 @@ function moveplayer(id,players,dt,input) {
 
 }
 
-function arrows_tick(arrows,dt) {
+function arrows_tick(arrows,dt,trusttime) {
 //	console.log(arrows,dt)
 	var time = Date.now();
 	for (aid of Object.keys(arrows)) {
 		arrow_tick(arrows,aid,dt)
-		if ((arrows[aid].time + 1000) < time)
+		if ((arrows[aid].time + 1000) < time && trusttime)
 			delete arrows[aid]
 	}
 }
