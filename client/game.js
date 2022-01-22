@@ -31,7 +31,8 @@ var players = Object.create(null);
 // the playerdata last update, used for interpolation
 var players_old = Object.create(null);
 var last_update_time = performance.now();
-
+var last_arrow_update_time = performance.now();
+var arrows_old = Object.create(null);
 var arrows = Object.create(null);
 var fakearrows = Object.create(null);
 var inputs = {left: false, right: false, up: false, down: false, fleft: false, fright: false}
@@ -58,16 +59,11 @@ function snap(proto, data) {
 function handlemsg(obj) {
 	if (obj.players) {
 		last_update_time = performance.now()
-		// backup old player data;
-		for (pid of Object.keys(players))
-			players_old[pid] = players[pid];
-		// update positions
-		for (pid of Object.keys(obj.players)) {
-			// dont move the owned player
-			if (pid !== selfId || obj.overrideself) {
-				players[pid] = snap(players[pid],obj.players[pid]);
-			}
-		}
+		for (pid of (Object.keys(players)))
+			players_old[pid] = players[pid]
+		for (pid of (Object.keys(obj.players)))
+			if (pid !== selfId)
+				players[pid] = obj.players[pid]
 	}
 	if (obj.fireack !== undefined) {
 		if (remove_old_fake_arrows) {
@@ -75,13 +71,18 @@ function handlemsg(obj) {
 			delete fakearrows[obj.fireack]
 		}
 	}
-	if (obj.arrows !== undefined)
-		arrows = obj.arrows;
+	if (obj.arrows !== undefined) {
+//		console.log(obj.arrows)
+		last_arrow_update_time = performance.now()
+		for (aid of Object.keys(arrows))
+			arrows_old[aid] = arrows[aid]
+		arrows = obj.arrows
+	}
 	if (obj.selfid !== undefined) {
-		selfId = obj.selfid
+		selfId = obj.selfid;
 		players[selfId] = {}
 		players[selfId].pos = [100,100]
-		players[selfId].angle = 0
+		players[selfId].angle = 0;
 	}
 	if (obj.leave !== undefined) {
 		for (pid of Object.values(obj.leave)) {
@@ -92,7 +93,6 @@ function handlemsg(obj) {
 	if (obj.pong !== undefined) {
 		var mesured_ping = Date.now() - obj.pong;
 		gameping = gameping*0.9 + mesured_ping * 0.1
-		//console.log(`pong: ${obj.pong}; time ${Date.now()} ; ping: ${mesured_ping}; ping 2s rolling ${gameping};`,obj)
 	}
 
 }

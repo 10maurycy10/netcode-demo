@@ -61,9 +61,20 @@ function render(time) {
 		else
 			drawCircle(ctx, ap_pos[0],ap_pos[1], 10, colors.blue)
 	}
+	console.log(arrows)
+	if (arrows)
 	for (aid of Object.keys(arrows)) {
-		drawCircle(ctx, arrows[aid].pos[0], arrows[aid].pos[1], 2, "#EEEEEE")
+		let ap_pos = [...arrows[aid].pos];
+		if (arrows_old[aid]) {
+			var itime = (time - last_arrow_update_time);
+			itime = Math.min(1,itime/(1000/24))
+			ap_pos[0] = lerp(arrows_old[aid].pos[0],ap_pos[0],itime)
+			ap_pos[1] = lerp(arrows_old[aid].pos[1],ap_pos[1],itime)
+		}
+		drawCircle(ctx, ap_pos[0], ap_pos[1], 2, "#EEEEEE")
 	}
+	else
+		console.log("wtf")
 	for (aid of Object.keys(fakearrows)) {
 		drawCircle(ctx, fakearrows[aid].pos[0], fakearrows[aid].pos[1], 2, "#00EE00")
 	}
