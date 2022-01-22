@@ -61,7 +61,7 @@ function render(time) {
 		else
 			drawCircle(ctx, ap_pos[0],ap_pos[1], 10, colors.blue)
 	}
-	console.log(arrows)
+	//console.log(arrows)
 	if (arrows)
 	for (aid of Object.keys(arrows)) {
 		let ap_pos = [...arrows[aid].pos];

@@ -31,8 +31,6 @@ var players = Object.create(null);
 // the playerdata last update, used for interpolation
 var players_old = Object.create(null);
 var last_update_time = performance.now();
-var last_arrow_update_time = performance.now();
-var arrows_old = Object.create(null);
 var arrows = Object.create(null);
 var fakearrows = Object.create(null);
 var inputs = {left: false, right: false, up: false, down: false, fleft: false, fright: false}
@@ -72,10 +70,6 @@ function handlemsg(obj) {
 		}
 	}
 	if (obj.arrows !== undefined) {
-//		console.log(obj.arrows)
-		last_arrow_update_time = performance.now()
-		for (aid of Object.keys(arrows))
-			arrows_old[aid] = arrows[aid]
 		arrows = obj.arrows
 	}
 	if (obj.selfid !== undefined) {
@@ -106,7 +100,8 @@ function update_movement(dt) {
 var last_frame = Date.now();
 function frame(t) {	
 	render(t);
-	arrows_tick(arrows, (t - last_frame)/1000)
+	arrows_tick(arrows,     (t - last_frame)/1000)
+	arrows_tick(fakearrows, (t - last_frame)/1000);
 	update_movement((t - last_frame)/1000);
 	last_frame = t;
 	requestAnimationFrame(frame);
@@ -126,7 +121,6 @@ socket.addEventListener('open', (event) => {
 	
 	requestAnimationFrame(frame)
 	setInterval(() => socket.send(msgpack.encode({ping: Date.now()},200)))
-	setInterval(() => arrows_tick(fakearrows,1/24), 1000/24);
 });
 
 socket.addEventListener('error', (e) => {alert(`Disconnected`); console.error(e);})
