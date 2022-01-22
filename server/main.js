@@ -13,7 +13,7 @@ var connections = Object.create(null)
 var arrows = Object.create(null)
 
 function update() {
-	game.arrow_tick(arrows,1/24)
+	game.arrow_tick(arrows,1/24,true)
 }
 
 function validatedata(obj) {
@@ -80,7 +80,7 @@ function setupServer() {
 		var id = uuid.v4()
 		console.log(`join ${id} ${req.socket.remoteAddress}`)
 		connections[id] = socket;
-		socket.on('message', (msg) => handlemsg(msg,id,req.socket.remoteAddress),300);
+		socket.on('message', (msg) => handlemsg(msg,id,req.socket.remoteAddress));
 		socket.on('close', () => {
 			console.log(`${id} left, ${req.socket.remoteAddress}`)
 			delete players[id]
