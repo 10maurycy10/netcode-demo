@@ -106,6 +106,7 @@ function update_movement(dt) {
 var last_frame = Date.now();
 function frame(t) {	
 	render(t);
+	arrows_tick(arrows, (t - last_frame)/1000)
 	update_movement((t - last_frame)/1000);
 	last_frame = t;
 	requestAnimationFrame(frame);

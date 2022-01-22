@@ -65,12 +65,6 @@ function render(time) {
 	if (arrows)
 	for (aid of Object.keys(arrows)) {
 		let ap_pos = [...arrows[aid].pos];
-		if (arrows_old[aid]) {
-			var itime = (time - last_arrow_update_time);
-			itime = Math.min(1,itime/(1000/24))
-			ap_pos[0] = lerp(arrows_old[aid].pos[0],ap_pos[0],itime)
-			ap_pos[1] = lerp(arrows_old[aid].pos[1],ap_pos[1],itime)
-		}
 		drawCircle(ctx, ap_pos[0], ap_pos[1], 2, "#EEEEEE")
 	}
 	else
