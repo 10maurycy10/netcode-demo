@@ -18,6 +18,28 @@ function arrow_tick(arrows,id,dt) {
 	arrows[id].pos = [ap[0] + av[0] * dt, ap[1] + av[1]*dt]
 }
 
+function moveplayer(id,players,dt,input) {
+	if (input.up) {
+		players[id].pos[1] -= 100*dt
+	}
+	if (input.down) {
+		players[id].pos[1] += 100*dt
+	}
+	if (input.left) {
+		players[id].pos[0] -= 100*dt
+	}
+	if (input.right) {
+		players[id].pos[0] += 100*dt
+	}
+	if (input.fleft) {
+		players[id].angle += 5*dt
+	}
+	if (input.fright) {
+		players[id].angle -= 5*dt
+	}
+
+}
+
 function arrows_tick(arrows,dt) {
 //	console.log(arrows,dt)
 	var time = Date.now();

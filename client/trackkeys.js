@@ -11,7 +11,7 @@ var farrowid = 0;
 
 // move to trackkeys.js
 document.addEventListener('keypress', (event) => {
-        console.log(event)
+        //console.log(event)
 	var name = event.key;
 	if (name === " ") {
 		var id = farrowid++;

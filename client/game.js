@@ -94,34 +94,18 @@ function handlemsg(obj) {
 
 }
 
-function update_movement() {
+function update_movement(dt) {
 	if (!selfId) return;
-	if (inputs["left"]) {
-		players[selfId].pos[0] -= 2;
-	}
-	if (inputs["right"]) {
-		players[selfId].pos[0] += 2;
-	}
-	if (inputs["down"]) {
-		players[selfId].pos[1] += 2;
-	}
-	if (inputs["up"]) {
-		players[selfId].pos[1] -= 2;
-	}
-	if (inputs["fleft"]) {
-		players[selfId].angle += 0.1
-	}
-	if (inputs["fright"]) {
-		players[selfId].angle -= 0.1
-	}
-	
-	// send update to server
+	moveplayer(selfId, players, dt, inputs)
 	socket.send(msgpack.encode({selfdata: players[selfId]}))
 }
 
-function dorender(t) {	
+var last_frame = Date.now();
+function frame(t) {	
 	render(t);
-	requestAnimationFrame(dorender);
+	update_movement((t - last_frame)/1000);
+	last_frame = t;
+	requestAnimationFrame(frame);
 }
 
 socket.addEventListener('open', (event) => {
@@ -136,11 +120,9 @@ socket.addEventListener('open', (event) => {
 
 	// TODO consolidate the updates.
 	
-	requestAnimationFrame(dorender)
-
-	setInterval(update_movement, 1000/60)
+	requestAnimationFrame(frame)
 	setInterval(() => socket.send(msgpack.encode({ping: Date.now()},200)))
-	setInterval(() =>arrows_tick(fakearrows,1/24), 1000/24);
+	setInterval(() => arrows_tick(fakearrows,1/24), 1000/24);
 });
 
 socket.addEventListener('error', (e) => {alert(`Disconnected`); console.error(e);})
